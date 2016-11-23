@@ -1,2 +1,41 @@
 #Collect data from the web
     #iteration 1: from twitter
+    #Using the python twitter API
+    
+    
+#the module tweepy should be pasted in the root
+#Import the necessary methods from tweepy library
+
+from tweepy.streaming import StreamListener
+from tweepy import OAuthHandler
+from tweepy import Stream
+
+#Variables that contains the user credentials to access Twitter API 
+access_token = "801345509252272128-sJJTtLTBTYlYVWjiF2TKb2a5GfA2LYH"
+access_token_secret = "U6VvYEPXVFLakbh2Mf1Y1WCEshLSNoGyx13wWS2MquiCG"
+consumer_key = "xKL89AbnklOEP4W57m5tKAcX6"
+consumer_secret = "9CANhecFVkGYDYf3t4nqN5rY2RGN4ZJK0jFPNVblx6v7XTZj8s"
+
+
+#This is a basic listener that just prints received tweets to stdout.
+class StdOutListener(StreamListener):
+
+    def on_data(self, data):
+        print data
+        return True
+
+    def on_error(self, status):
+        print status
+
+
+if __name__ == '__main__':
+
+    #This handles Twitter authetification and the connection to Twitter Streaming API
+    l = StdOutListener()
+    auth = OAuthHandler(consumer_key, consumer_secret)
+    auth.set_access_token(access_token, access_token_secret)
+    stream = Stream(auth, l)
+
+    #This line filter Twitter Streams to capture data by the keywords: 'python', 'javascript', 'ruby'
+    stream.filter(track=['iphone7', 'galaxy note 7'])
+
