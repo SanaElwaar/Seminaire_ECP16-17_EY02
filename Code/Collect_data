@@ -1,0 +1,56 @@
+## API Twitter Collector + Retweet and basic Pubicity Filter
+
+from tweepy import OAuthHandler
+from tweepy import Stream
+import tweepy
+import json
+import codecs
+from pprint import pprint
+import re
+import time
+
+print("--------------------------------------")
+print("--------------------------------------")
+print("--------------------------------------")
+print("--------------------------------------")
+
+
+# Authentification Process
+
+consumer_key = "xKL89AbnklOEP4W57m5tKAcX6"
+consumer_secret = "9CANhecFVkGYDYf3t4nqN5rY2RGN4ZJK0jFPNVblx6v7XTZj8s"
+access_token = "801345509252272128-sJJTtLTBTYlYVWjiF2TKb2a5GfA2LYH"
+access_token_secret = "U6VvYEPXVFLakbh2Mf1Y1WCEshLSNoGyx13wWS2MquiCG"
+
+auth = OAuthHandler(consumer_key, consumer_secret)
+auth.set_access_token(access_token, access_token_secret)
+
+# Data collection, retweet and basic publicity filtering and storing the data
+
+api = tweepy.API(auth)
+
+public_tweets = api.home_timeline()
+
+cpt = 0
+jsonDicos=[]
+query = "culture"
+
+with open("tweets_" + query + ".json", "w") as wFile:
+    c=tweepy.Cursor(api.search, q=query, lang="fr").items(10000)
+    for i in range(10000):
+        try:
+            status= c.next()
+            cpt+=1
+            if('RT @' not in status.text and 'https://' not in status.text):
+#                print("--------------------------------------")
+#                print(status.created_at)
+#                print(status.text)
+                jsonDicos = jsonDicos + [status._json]
+        except tweepy.TweepError:
+            print("Sleeping ! " + str(i))
+            time.sleep(60*15)
+            continue
+        except StopIteration:
+            print("i = " + str(i))
+            break
+    json.dump(jsonDicos, wFile)
